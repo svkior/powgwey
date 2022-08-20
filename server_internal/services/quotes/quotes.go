@@ -6,7 +6,6 @@ import (
 	"errors"
 	"math/big"
 	"os"
-	"time"
 
 	"github.com/svkior/powgwey/server_internal/app"
 	"github.com/svkior/powgwey/server_internal/models"
@@ -18,35 +17,33 @@ import (
 )
 
 var (
-	ErrNilConfig             = errors.New("configuration is nil")
-	ErrZeroWorkersCount      = errors.New("zero workers count")
-	ErrEmptyFilepath         = errors.New("empty quotes filepath")
-	ErrNotImplemented        = errors.New("not implemented")
-	ErrQuotesFileIsNotExists = errors.New("quotes file is not exists")
-	ErrEmptyDatabase         = errors.New("empty database")
+	ErrNilConfig        = errors.New("configuration is nil")
+	ErrZeroWorkersCount = errors.New("zero workers count")
+	ErrNotImplemented   = errors.New("not implemented")
 )
 
 type configurer interface {
-	GetQuotesFilepath() string
-	GetProcessingTime() time.Duration
 	GetWorkersCount() uint
 }
 
+type quotesStorage interface {
+	GetQuote(ctx context.Context) (string, error)
+}
+
 type quotesService struct {
-	quotesFilepath string
-	processingTime time.Duration
-	workersCount   uint
+	workersCount uint
+	storage      quotesStorage
 
-	quotes *models.Quotes
-
-	mu deadlock.RWMutex
+	mu     deadlock.RWMutex
+	cancel func()
 }
 
 func (qs *quotesService) Startup(ctx context.Context) (err error) {
+	ctx, qs.cancel = context.WithCancel(ctx)
 	g, ctx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		return qs.loadQuotes(ctx)
+		return qs.initWorkerPool(ctx)
 	})
 
 	g.Go(func() error {
@@ -61,7 +58,9 @@ func (qs *quotesService) Startup(ctx context.Context) (err error) {
 	return nil
 }
 
-func (qs *quotesService) GetQuote() (string, error) {
+func (qs *quotesService) 
+
+func (qs *quotesService) GetQuote(ctx context.Context) (string, error) {
 	qs.mu.RLock()
 	defer qs.mu.RUnlock()
 
