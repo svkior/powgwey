@@ -44,6 +44,14 @@ Possibly can work everywhere on Linux/MacOS X, but tested on this config:
 4. GNU Make 3.81
 5. curl 7.79.1
 
+### List of all available commands
+
+To list all of the available commands just type:
+
+```bash
+make help
+```
+
 ###  2.2. <a name='Buildingbaseimage'></a>Building base image
 
 ```bash
@@ -89,7 +97,20 @@ make start-client
 
 ###  2.9. <a name='Startload-test'></a>Start load-test
 
+
+### Update quotes from another repo
+
+```bash
+make update-quotes
+```
+
 ##  3. <a name='Solution'></a>Solution
+
+### Quotes
+
+I've taked quotes from different repo on github.
+
+Permlink is : https://raw.githubusercontent.com/msramalho/json-tv-quotes/master/quotes.json
 
 
 ##  4. <a name='Serverenvironmentvariables'></a>Server environment variables
