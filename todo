@@ -1,0 +1,31 @@
+Infrastructure:
+    ☐ Makefile
+    ☐ Metrics
+    ☐ Logging
+    ☐ Jaeger
+    ☐ loadtesting
+Common:
+    ☐ contracts
+Server:
+    ☐ skeleton
+    ☐ protocol library
+    ☐ business logic
+Client:
+    ☐ skeleton
+    ☐ protocol library
+    ☐ business logic
+LoadTesting:
+    ☐ plugin for K6
+    ☐ metrics
+Deploys:
+    makefile:
+        ☐ base-image @started(22-08-20 10:59)
+    dockers:
+        ☐ base golang image @started(22-08-20 10:59)
+Documenting:
+    ☐ skeleton
+    ✔ Problem statement @done(22-08-20 10:52)
+    ☐ Research
+    ☐ Requirements
+    ☐ Descisions
+    ☐ How to run
