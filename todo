@@ -19,9 +19,11 @@ LoadTesting:
     ☐ metrics
 Deploys:
     makefile:
-        ☐ base-image @started(22-08-20 10:59)
+        ☐ base-image
     dockers:
-        ☐ base golang image @started(22-08-20 10:59)
+        ☐ base golang image
+    quotes:
+        ☐ 1-get-quotes get quotes @started(22-08-20 11:25)
 Documenting:
     ☐ skeleton
     ✔ Problem statement @done(22-08-20 10:52)

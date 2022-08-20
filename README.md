@@ -89,7 +89,20 @@ make start-client
 
 ###  2.9. <a name='Startload-test'></a>Start load-test
 
+
+### Update quotes from another repo
+
+```bash
+make update-quotes
+```
+
 ##  3. <a name='Solution'></a>Solution
+
+### Quotes
+
+I've taked quotes from different repo on github.
+
+Permlink is : https://raw.githubusercontent.com/msramalho/json-tv-quotes/master/quotes.json
 
 
 ##  4. <a name='Serverenvironmentvariables'></a>Server environment variables
