@@ -9,6 +9,8 @@ Common:
 Server:
     ☐ skeleton
     ☐ protocol library
+    service components:
+        ☐ quotes @started(22-08-20 11:46)
     ☐ business logic
 Client:
     ☐ skeleton
