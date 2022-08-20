@@ -26,7 +26,7 @@ func main() {
 	gzap.Logger.Info("Hello, World")
 	printAllEnvVariables()
 
-	exitSignal := make(chan os.Signal)
+	exitSignal := make(chan os.Signal, 1)
 	signal.Notify(exitSignal, syscall.SIGINT, syscall.SIGTERM)
 	<-exitSignal
 }

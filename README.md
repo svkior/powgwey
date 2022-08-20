@@ -4,15 +4,17 @@
 * 1. [Problem statement](#Problemstatement)
 * 2. [How to run](#Howtorun)
 	* 2.1. [Requirements](#Requirements)
-	* 2.2. [Building base image](#Buildingbaseimage)
-	* 2.3. [Linter check](#Lintercheck)
-	* 2.4. [Passing tests](#Passingtests)
-	* 2.5. [Build images](#Buildimages)
+	* 2.2. [List of all available commands](#Listofallavailablecommands)
+	* 2.3. [Building base image](#Buildingbaseimage)
+	* 2.4. [Linter check](#Lintercheck)
+	* 2.5. [Passing tests](#Passingtests)
 	* 2.6. [Monitoring environment](#Monitoringenvironment)
 	* 2.7. [Start server](#Startserver)
 	* 2.8. [Start client](#Startclient)
 	* 2.9. [Start load-test](#Startload-test)
+	* 2.10. [Update quotes from another repo](#Updatequotesfromanotherrepo)
 * 3. [Solution](#Solution)
+	* 3.1. [Quotes](#Quotes)
 * 4. [Server environment variables](#Serverenvironmentvariables)
 * 5. [Client command lines ??](#Clientcommandlines)
 
@@ -48,7 +50,7 @@ Possibly can work everywhere on Linux/MacOS X, but tested on this config:
 *There is no needence for installing golang locally, need access to the Internet for a first fime*
 
 May be some issues when running on m1 mac's
-### List of all available commands
+###  2.2. <a name='Listofallavailablecommands'></a>List of all available commands
 
 To list all of the available commands just type:
 
@@ -56,7 +58,7 @@ To list all of the available commands just type:
 make help
 ```
 
-###  2.2. <a name='Buildingbaseimage'></a>Building base image
+###  2.3. <a name='Buildingbaseimage'></a>Building base image
 
 The base image is used by other images to build, lint, test and check software in containers.
 
@@ -76,13 +78,13 @@ Building client image:
 make build-client
 ```
 
-###  2.3. <a name='Lintercheck'></a>Linter check
+###  2.4. <a name='Lintercheck'></a>Linter check
 
 ```bash
 make lint
 ```
 
-###  2.4. <a name='Passingtests'></a>Passing tests
+###  2.5. <a name='Passingtests'></a>Passing tests
 
 ```bash
 make test
@@ -110,7 +112,7 @@ make start-client
 ###  2.9. <a name='Startload-test'></a>Start load-test
 
 
-### Update quotes from another repo
+###  2.10. <a name='Updatequotesfromanotherrepo'></a>Update quotes from another repo
 
 ```bash
 make update-quotes
@@ -118,7 +120,7 @@ make update-quotes
 
 ##  3. <a name='Solution'></a>Solution
 
-### Quotes
+###  3.1. <a name='Quotes'></a>Quotes
 
 I've taked quotes from different repo on github.
 

@@ -35,7 +35,7 @@ start-client: ## start server in detached container
 
 .PHONY: watch-server
 watch-server: ## start server in autoreload mode
-	docker run -it --rm --name server \
+	@docker run -it --rm --name server \
 		--network local \
 		-v ${PWD}:/project \
 		-v golang-cache-vol:/go/pkg/mod \
@@ -45,7 +45,7 @@ watch-server: ## start server in autoreload mode
 
 .PHONY: watch-client
 watch-client: ## start server in autoreload mode
-	docker run -it --rm --name client \
+	@docker run -it --rm --name client \
 		--network local \
 		-v ${PWD}:/project \
 		-v golang-cache-vol:/go/pkg/mod \
@@ -57,6 +57,40 @@ watch-client: ## start server in autoreload mode
 update-quotes: ## Update quotes from external link
 	@mkdir -p data/quotes
 	@curl -o data/quotes/movies.json https://raw.githubusercontent.com/msramalho/json-tv-quotes/master/quotes.json 
+
+.PHONY: lint
+lint: ## Lint all golang code
+	docker run --rm \
+		-v ${PWD}:/project \
+		-v golang-cache-vol:/go/pkg/mod \
+		-v go-build-vol:/root/.cache/go-build \
+		--workdir="/project" \
+		--entrypoint=golangci-lint \
+		localhost:5000/air run -v ./...
+
+.PHONY: test
+test: ## test all golang code
+	docker run --rm \
+		-v ${PWD}:/project \
+		-v golang-cache-vol:/go/pkg/mod \
+		-v go-build-vol:/root/.cache/go-build \
+		--workdir="/project" \
+		--entrypoint=go \
+		localhost:5000/air \
+		test -race -covermode=atomic \
+		-coverprofile=coverage.out ./...
+
+.PHONY: watch-test
+watch-test: ## test all golang code
+	docker run --rm --name watch-test \
+		-v ${PWD}:/project \
+		-v golang-cache-vol:/go/pkg/mod \
+		-v go-build-vol:/root/.cache/go-build \
+		-p 8080:8080 \
+		--workdir="/project" \
+		--entrypoint=goconvey \
+		localhost:5000/air \
+		-excludedDirs "data,deploy,tmp" -host "0.0.0.0" 
 
 .PHONY: help
 help: ## Print this help

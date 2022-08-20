@@ -1,5 +1,6 @@
 Infrastructure:
-    ☐ Makefile
+    ✔ linter checks @started(22-08-20 14:43) @done(22-08-20 14:58) @lasted(15m56s)
+    ✔ testsuites @started(22-08-20 14:59) @done(22-08-20 15:36) @lasted(37m23s)
     ☐ Metrics
     ☐ Logging
     ☐ Jaeger
@@ -8,11 +9,11 @@ Infrastructure:
 Common:
     ☐ contracts
 Server:
-    ☐ skeleton @started(22-08-20 14:26)
+    ✔ skeleton @started(22-08-20 14:26) @done(22-08-20 14:41) @lasted(15m)
     ☐ protocol library
     ☐ business logic
 Client:
-    ☐ skeleton
+    ✔ skeleton @done(22-08-20 14:41)
     ☐ protocol library
     ☐ business logic
 LoadTesting:
@@ -24,9 +25,11 @@ Deploys:
         ✔ build-client @done(22-08-20 14:22)
         ✔ build-server @started(22-08-20 12:44) @done(22-08-20 14:22) @lasted(1h38m7s)
         ✔ help @done(22-08-20 14:23)
+        ✔ lint @started(22-08-20 14:43) @done(22-08-20 14:58) @lasted(15m43s)
+        ✔ test @started(22-08-20 14:59) @done(22-08-20 15:36) @lasted(37m28s)
+        ✔ update-quotes @done(22-08-20 11:39)
         ✔ start-client @done(22-08-20 14:23)
         ✔ start-server @done(22-08-20 14:23)
-        ✔ update-quotes @done(22-08-20 11:39)
         ✔ watch-client @started(22-08-20 12:46) @done(22-08-20 14:24) @lasted(1h38m9s)
         ✔ watch-server @started(22-08-20 12:45) @done(22-08-20 14:24) @lasted(1h39m10s)
     dockers:
