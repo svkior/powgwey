@@ -6,6 +6,17 @@ build-base: ## build base golang working image
 		-f  deploy/base-image/Dockerfile \
 		deploy/base-image/
 
+.PHONY: generate
+generate: ## regenerate all generated code
+	docker run -it --rm \
+		-v ${PWD}:/project \
+		-v golang-cache-vol:/go/pkg/mod \
+		-v go-build-vol:/root/.cache/go-build \
+		--workdir="/project" \
+		--entrypoint=go \
+		localhost:5000/air \
+		generate ./...
+
 .PHONY: build-server
 build-server: ## build server production image
 	@docker build \
@@ -84,7 +95,7 @@ test: ## test all golang code
 
 .PHONY: watch-test
 watch-test: ## test all golang code
-	docker run --rm --name watch-test \
+	@docker run --rm --name watch-test \
 		-v ${PWD}:/project \
 		-v golang-cache-vol:/go/pkg/mod \
 		-v go-build-vol:/root/.cache/go-build \
@@ -93,6 +104,11 @@ watch-test: ## test all golang code
 		--entrypoint=goconvey \
 		localhost:5000/air \
 		-excludedDirs "data,deploy,tmp" -host "0.0.0.0" 
+
+.PHONY: watch-testlocal
+watch-testlocal: ## test all golang code on local environment
+	~/go/bin/goconvey \
+	-excludedDirs "data,deploy,tmp" -host "0.0.0.0" 
 
 .PHONY: help
 help: ## Print this help
