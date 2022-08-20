@@ -1,4 +1,11 @@
 # Main targets
+.PHONY: base-image
+base-image: ## build base golang working image
+	docker build \
+    -t localhost:5000/air:latest \
+    -f  deploy/base-image/Dockerfile \
+    deploy/base-image/
+
 .PHONY: update-quotes
 update-quotes: ## Update quotes from external link
 	@mkdir -p data/quotes
