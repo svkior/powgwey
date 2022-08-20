@@ -43,7 +43,11 @@ Possibly can work everywhere on Linux/MacOS X, but tested on this config:
 3. Docker Desktop 4.4.2+
 4. GNU Make 3.81
 5. curl 7.79.1
+6. code is compatible with golang 1.18.3
 
+*There is no needence for installing golang locally, need access to the Internet for a first fime*
+
+May be some issues when running on m1 mac's
 ### List of all available commands
 
 To list all of the available commands just type:
@@ -54,8 +58,22 @@ make help
 
 ###  2.2. <a name='Buildingbaseimage'></a>Building base image
 
+The base image is used by other images to build, lint, test and check software in containers.
+
 ```bash
-make base-image
+make build-base
+```
+
+Builind server image:
+
+```bash
+make build-server
+```
+
+Building client image:
+
+```bash
+make build-client
 ```
 
 ###  2.3. <a name='Lintercheck'></a>Linter check
@@ -68,12 +86,6 @@ make lint
 
 ```bash
 make test
-```
-
-###  2.5. <a name='Buildimages'></a>Build images
-
-```bash
-make docker-build
 ```
 
 ###  2.6. <a name='Monitoringenvironment'></a>Monitoring environment
