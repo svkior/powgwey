@@ -44,6 +44,14 @@ Possibly can work everywhere on Linux/MacOS X, but tested on this config:
 4. GNU Make 3.81
 5. curl 7.79.1
 
+### List of all available commands
+
+To list all of the available commands just type:
+
+```bash
+make help
+```
+
 ###  2.2. <a name='Buildingbaseimage'></a>Building base image
 
 ```bash
