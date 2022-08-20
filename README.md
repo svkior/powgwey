@@ -134,6 +134,16 @@ Permlink is : https://raw.githubusercontent.com/msramalho/json-tv-quotes/master/
 Service component "quotes" is located in server_internal/services folder
 
 - configuration of this component is located in server_internal/config/quotes
+###  3.2. <a name='Quotes'></a>Quotes
+
+Component model:
+I've taked quotes from different repo on github.
+
+Permlink is : https://raw.githubusercontent.com/msramalho/json-tv-quotes/master/quotes.json
+
+Service component "quotes" is located in server_internal/services folder
+
+- configuration of this component is located in server_internal/config/quotes
 
 Component model:
 

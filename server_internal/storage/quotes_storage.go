@@ -1,4 +1,4 @@
-package quotes
+package storage
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"errors"
 	"math/big"
 	"os"
+	"time"
 
 	"github.com/svkior/powgwey/server_internal/app"
 	"github.com/svkior/powgwey/server_internal/models"
@@ -17,33 +18,41 @@ import (
 )
 
 var (
-	ErrNilConfig        = errors.New("configuration is nil")
-	ErrZeroWorkersCount = errors.New("zero workers count")
-	ErrNotImplemented   = errors.New("not implemented")
+	ErrNilConfig             = errors.New("configuration is nil")
+	ErrEmptyFilepath         = errors.New("empty quotes filepath")
+	ErrQuotesFileIsNotExists = errors.New("quotes file is not exists")
+	ErrStorageIsNotStarted   = errors.New("can't stop storage is not started")
+	ErrEmptyDatabase         = errors.New("empty database")
+	ErrNotImplemented        = errors.New("not implemented")
+	ErrShuttingDown          = errors.New("shutting down storage")
 )
 
 type configurer interface {
-	GetWorkersCount() uint
+	GetQuotesFilepath() string
+	GetProcessingTime() time.Duration
 }
 
-type quotesStorage interface {
-	GetQuote(ctx context.Context) (string, error)
-}
+type quotesStorage struct {
+	quotesFilepath string
+	processingTime time.Duration
 
-type quotesService struct {
-	workersCount uint
-	storage      quotesStorage
+	quotes *models.Quotes
 
 	mu     deadlock.RWMutex
-	cancel func()
+	finish func()
 }
 
-func (qs *quotesService) Startup(ctx context.Context) (err error) {
-	ctx, qs.cancel = context.WithCancel(ctx)
-	g, ctx := errgroup.WithContext(ctx)
+func (qs *quotesStorage) Startup(ctx context.Context) (err error) {
 
+	gzap.Logger.Info("Starting quotes storage",
+		gzap.String("quotes from", qs.quotesFilepath),
+		gzap.Duration("processing time", qs.processingTime),
+	)
+
+	ctx, qs.finish = context.WithCancel(ctx)
+	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error {
-		return qs.initWorkerPool(ctx)
+		return qs.loadQuotes(ctx)
 	})
 
 	g.Go(func() error {
@@ -58,9 +67,22 @@ func (qs *quotesService) Startup(ctx context.Context) (err error) {
 	return nil
 }
 
-func (qs *quotesService) 
+func (qs *quotesStorage) Shutdown(_ context.Context) (err error) {
+	gzap.Logger.Info("Shutting down quotes storage",
+		gzap.String("quotes from", qs.quotesFilepath),
+		gzap.Duration("processing time", qs.processingTime),
+	)
 
-func (qs *quotesService) GetQuote(ctx context.Context) (string, error) {
+	if qs.finish == nil {
+		return ErrStorageIsNotStarted
+	}
+
+	qs.finish()
+
+	return nil
+}
+
+func (qs *quotesStorage) GetQuote(ctx context.Context) (string, error) {
 	qs.mu.RLock()
 	defer qs.mu.RUnlock()
 
@@ -76,10 +98,16 @@ func (qs *quotesService) GetQuote(ctx context.Context) (string, error) {
 
 	quote := (*qs.quotes)[index]
 
+	select {
+	case <-ctx.Done():
+		return "", ErrShuttingDown
+	case <-time.After(qs.processingTime):
+	}
+
 	return quote.Quote, nil
 }
 
-func (qs *quotesService) loadQuotes(ctx context.Context) error {
+func (qs *quotesStorage) loadQuotes(ctx context.Context) error {
 	rawBytes, err := os.ReadFile(qs.quotesFilepath)
 	if err != nil {
 		gzap.Logger.Error("error reading quotes file",
@@ -105,23 +133,18 @@ func (qs *quotesService) loadQuotes(ctx context.Context) error {
 	return nil
 }
 
-func NewQuotesService(
+func NewQuotesStorage(
 	ctx context.Context,
 	cfg configurer,
-) (*quotesService, error) {
+) (*quotesStorage, error) {
 
 	if cfg == nil {
 		return nil, ErrNilConfig
 	}
 
-	s := &quotesService{
+	s := &quotesStorage{
 		quotesFilepath: cfg.GetQuotesFilepath(),
 		processingTime: cfg.GetProcessingTime(),
-		workersCount:   cfg.GetWorkersCount(),
-	}
-
-	if s.workersCount < 1 {
-		return nil, ErrZeroWorkersCount
 	}
 
 	if len(s.quotesFilepath) == 0 {
