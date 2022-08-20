@@ -1,6 +1,7 @@
 Infrastructure:
     ✔ linter checks @started(22-08-20 14:43) @done(22-08-20 14:58) @lasted(15m56s)
     ✔ testsuites @started(22-08-20 14:59) @done(22-08-20 15:36) @lasted(37m23s)
+    ✔ configuring with Vieper @started(22-08-20 15:49) @done(22-08-20 16:21) @lasted(32m56s)
     ☐ Metrics
     ☐ Logging
     ☐ Jaeger

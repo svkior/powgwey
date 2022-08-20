@@ -23,6 +23,7 @@ build-client: ## build server production image
 .PHONY: start-server
 start-server: ## start server in detached container
 	@docker run --rm --name server \
+		--env-file "./deploy/server.env" \
 		-d --network local \
 		localhost:5000/server:latest
 
@@ -37,6 +38,7 @@ start-client: ## start server in detached container
 watch-server: ## start server in autoreload mode
 	@docker run -it --rm --name server \
 		--network local \
+		--env-file "./deploy/server.env" \
 		-v ${PWD}:/project \
 		-v golang-cache-vol:/go/pkg/mod \
 		-v go-build-vol:/root/.cache/go-build \
