@@ -1,17 +1,19 @@
 Infrastructure:
-    ☐ Makefile
+    ✔ linter checks @started(22-08-20 14:43) @done(22-08-20 14:58) @lasted(15m56s)
+    ✔ testsuites @started(22-08-20 14:59) @done(22-08-20 15:36) @lasted(37m23s)
     ☐ Metrics
     ☐ Logging
     ☐ Jaeger
     ☐ loadtesting
+    ☐ module @started(22-08-20 12:35)
 Common:
     ☐ contracts
 Server:
-    ☐ skeleton
+    ✔ skeleton @started(22-08-20 14:26) @done(22-08-20 14:41) @lasted(15m)
     ☐ protocol library
     ☐ business logic
 Client:
-    ☐ skeleton
+    ✔ skeleton @done(22-08-20 14:41)
     ☐ protocol library
     ☐ business logic
 LoadTesting:
@@ -19,10 +21,21 @@ LoadTesting:
     ☐ metrics
 Deploys:
     makefile:
-        ☐ base-image @started(22-08-20 11:55)
+        ✔ build-base @started(22-08-20 11:55) @done(22-08-20 12:35) @lasted(40m26s)
+        ✔ build-client @done(22-08-20 14:22)
+        ✔ build-server @started(22-08-20 12:44) @done(22-08-20 14:22) @lasted(1h38m7s)
+        ✔ help @done(22-08-20 14:23)
+        ✔ lint @started(22-08-20 14:43) @done(22-08-20 14:58) @lasted(15m43s)
+        ✔ test @started(22-08-20 14:59) @done(22-08-20 15:36) @lasted(37m28s)
         ✔ update-quotes @done(22-08-20 11:39)
+        ✔ start-client @done(22-08-20 14:23)
+        ✔ start-server @done(22-08-20 14:23)
+        ✔ watch-client @started(22-08-20 12:46) @done(22-08-20 14:24) @lasted(1h38m9s)
+        ✔ watch-server @started(22-08-20 12:45) @done(22-08-20 14:24) @lasted(1h39m10s)
     dockers:
-        ☐ base golang image @started(22-08-20 11:55)
+        ✔ localhost:5000/air base golang image @started(22-08-20 11:55) @done(22-08-20 12:35) @lasted(40m29s)
+        ✔ localhost:5000/server server build image @started(22-08-20 12:45) @done(22-08-20 14:24) @lasted(1h39m57s)
+        ✔ localhost:5000/client server build image @started(22-08-20 12:47) @done(22-08-20 14:25) @lasted(1h38m24s)
     quotes:
         ✔ 1-get-quotes get quotes @started(22-08-20 11:25) @done(22-08-20 11:39) @lasted(14m26s)
 Documenting:
