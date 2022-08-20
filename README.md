@@ -137,6 +137,11 @@ Service component "quotes" is located in srvinternal/services folder
 
 - configuration of this component is located in srvinternal/config/quotes
 
+### Quotas Storage
+
+Implements simple storage for get quoting.
+
+
 
 ##  4. <a name='Serverenvironmentvariables'></a>Server environment variables
 
