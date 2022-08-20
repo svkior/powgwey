@@ -120,11 +120,22 @@ make update-quotes
 
 ##  3. <a name='Solution'></a>Solution
 
+
+### Common way of configuration of all service components
+
+I choosed viper.
+
+
+
 ###  3.1. <a name='Quotes'></a>Quotes
 
 I've taked quotes from different repo on github.
 
 Permlink is : https://raw.githubusercontent.com/msramalho/json-tv-quotes/master/quotes.json
+
+Service component "quotes" is located in srvinternal/services folder
+
+- configuration of this component is located in srvinternal/config/quotes
 
 
 ##  4. <a name='Serverenvironmentvariables'></a>Server environment variables
