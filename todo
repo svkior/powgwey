@@ -13,7 +13,10 @@ Server:
     ✔ skeleton @started(22-08-20 14:26) @done(22-08-20 14:41) @lasted(15m)
     ☐ protocol library
     service components:
-        ☐ quotes @started(22-08-20 11:46)
+        quotes: @started(22-08-20 11:46)
+            ☐ loading quotes
+            ☐ creating workerpool
+            ☐ 
     ☐ business logic
 Client:
     ✔ skeleton @done(22-08-20 14:41)
@@ -27,6 +30,7 @@ Deploys:
         ✔ build-base @started(22-08-20 11:55) @done(22-08-20 12:35) @lasted(40m26s)
         ✔ build-client @done(22-08-20 14:22)
         ✔ build-server @started(22-08-20 12:44) @done(22-08-20 14:22) @lasted(1h38m7s)
+        ✔ generate @done(22-08-20 18:34)
         ✔ help @done(22-08-20 14:23)
         ✔ lint @started(22-08-20 14:43) @done(22-08-20 14:58) @lasted(15m43s)
         ✔ test @started(22-08-20 14:59) @done(22-08-20 15:36) @lasted(37m28s)

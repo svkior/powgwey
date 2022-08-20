@@ -14,7 +14,8 @@
 	* 2.9. [Start load-test](#Startload-test)
 	* 2.10. [Update quotes from another repo](#Updatequotesfromanotherrepo)
 * 3. [Solution](#Solution)
-	* 3.1. [Quotes](#Quotes)
+	* 3.1. [Common way of configuration of all service components](#Commonwayofconfigurationofallservicecomponents)
+	* 3.2. [Quotes](#Quotes)
 * 4. [Server environment variables](#Serverenvironmentvariables)
 * 5. [Client command lines ??](#Clientcommandlines)
 
@@ -120,22 +121,31 @@ make update-quotes
 
 ##  3. <a name='Solution'></a>Solution
 
-
-### Common way of configuration of all service components
+###  3.1. <a name='Commonwayofconfigurationofallservicecomponents'></a>Common way of configuration of all service components
 
 I choosed viper.
 
-
-
-###  3.1. <a name='Quotes'></a>Quotes
+###  3.2. <a name='Quotes'></a>Quotes
 
 I've taked quotes from different repo on github.
 
 Permlink is : https://raw.githubusercontent.com/msramalho/json-tv-quotes/master/quotes.json
 
-Service component "quotes" is located in srvinternal/services folder
+Service component "quotes" is located in server_internal/services folder
 
-- configuration of this component is located in srvinternal/config/quotes
+- configuration of this component is located in server_internal/config/quotes
+
+Component model:
+
+- NewQuotesService
+- quotesService:
+  - Init() Initialize component
+  - Shutdown() Shutdown component
+  - GetQuote() Get Quote
+
+It can be assumed that in a highly loaded project, the payload will take some time.
+Let's limit the fictitious load of the variable QUOTES_PROCESSING_TIME
+We will create a work queue from QUOTES_WORKERS
 
 
 ##  4. <a name='Serverenvironmentvariables'></a>Server environment variables
