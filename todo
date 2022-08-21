@@ -8,18 +8,22 @@ Infrastructure:
     ☐ loadtesting
     ☐ module @started(22-08-20 12:35)
 Common:
-    ☐ contracts
+    contracts:
+        ✔ JobWorker @done(22-08-21 11:45)
+        ✔ Quotes JSON @done(22-08-21 11:45)
 Server:
     ✔ skeleton @started(22-08-20 14:26) @done(22-08-20 14:41) @lasted(15m)
     ☐ protocol library
+    tcp-server:
+            ☐ code from other repo as example
+            ☐ base component
+            ☐ base load test
     service components:
         quotes: @started(22-08-20 11:46)
-            ☐ creating workerpool
-            ☐ 
+            ✔ creating workerpool @done(22-08-21 11:45)
         storage:
-            ☐ quotes_storage @started(22-08-20 20:31)
+            ✔ quotes_storage @started(22-08-20 20:31) @done(22-08-21 11:45) @lasted(15h14m55s)
             ✔ loading quotes @done(22-08-20 20:32)
-
     ☐ business logic
 Client:
     ✔ skeleton @done(22-08-20 14:41)
