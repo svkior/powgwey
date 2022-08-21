@@ -3,7 +3,6 @@ package storage_test
 import (
 	"context"
 	"errors"
-	"fmt"
 	"testing"
 	"time"
 
@@ -31,7 +30,7 @@ func TestSpect(t *testing.T) {
 	Convey("Given quotes service with nil config", t, func() {
 		_, err := storage.NewQuotesStorage(ctx, nil)
 		Convey("The error should be ErrNilConfig", func() {
-			So(err, ShouldEqual, quotes.ErrNilConfig)
+			So(err, ShouldResemble, quotes.ErrNilConfig)
 		})
 	})
 
@@ -101,7 +100,7 @@ func TestSpect(t *testing.T) {
 					So(err2, ShouldNotBeNil)
 				})
 				Convey("should starts with parse", func() {
-					So(fmt.Sprintf("%s", err2), ShouldStartWith, "parse")
+					So(err2.Error(), ShouldStartWith, "parse")
 				})
 			})
 		})

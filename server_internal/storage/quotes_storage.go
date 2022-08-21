@@ -147,7 +147,7 @@ func NewQuotesStorage(
 		processingTime: cfg.GetProcessingTime(),
 	}
 
-	if len(s.quotesFilepath) == 0 {
+	if s.quotesFilepath == "" {
 		return nil, ErrEmptyFilepath
 	}
 
