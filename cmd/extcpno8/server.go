@@ -26,6 +26,7 @@ var epoller *epoll
 var workerPool *pool
 
 func main() {
+	log.SetFlags(log.Lshortfile)
 	flag.Parse()
 
 	setLimit()
@@ -61,7 +62,7 @@ func main() {
 			}
 
 			log.Printf("accept err: %v", e)
-			return
+			break
 		}
 
 		if err := epoller.Add(conn); err != nil {
