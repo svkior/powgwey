@@ -2,16 +2,10 @@ package quotes
 
 import (
 	"context"
-	"crypto/rand"
 	"errors"
-	"math/big"
-	"os"
 
-	"github.com/svkior/powgwey/server_internal/app"
-	"github.com/svkior/powgwey/server_internal/models"
-
-	"github.com/mailru/easyjson"
 	"github.com/sasha-s/go-deadlock"
+	"github.com/svkior/powgwey/server_internal/models"
 	"golang.org/x/sync/errgroup"
 	"gopkg.in/dailymuse/gzap.v1"
 )
@@ -20,22 +14,27 @@ var (
 	ErrNilConfig        = errors.New("configuration is nil")
 	ErrZeroWorkersCount = errors.New("zero workers count")
 	ErrNotImplemented   = errors.New("not implemented")
+	ErrNotIninializated = errors.New("service is not running")
+	ErrStorageIsNil     = errors.New("storage is nil")
+	ErrShutdown         = errors.New("service is shutdowning")
 )
 
 type configurer interface {
 	GetWorkersCount() uint
 }
 
-type quotesStorage interface {
+type quotesStorager interface {
 	GetQuote(ctx context.Context) (string, error)
 }
 
 type quotesService struct {
 	workersCount uint
-	storage      quotesStorage
+	storage      quotesStorager
 
-	mu     deadlock.RWMutex
-	cancel func()
+	workerChannel chan chan *models.QuotesWork
+	input         chan *models.QuotesWork
+	mu            deadlock.RWMutex
+	cancel        func()
 }
 
 func (qs *quotesService) Startup(ctx context.Context) (err error) {
@@ -43,7 +42,7 @@ func (qs *quotesService) Startup(ctx context.Context) (err error) {
 	g, ctx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		return qs.initWorkerPool(ctx)
+		return qs.initWorkerPool(ctx, g)
 	})
 
 	g.Go(func() error {
@@ -58,49 +57,94 @@ func (qs *quotesService) Startup(ctx context.Context) (err error) {
 	return nil
 }
 
-func (qs *quotesService) 
-
-func (qs *quotesService) GetQuote(ctx context.Context) (string, error) {
-	qs.mu.RLock()
-	defer qs.mu.RUnlock()
-
-	if len(*qs.quotes) == 0 {
-		return "", ErrEmptyDatabase
+func (qs *quotesService) Shutdown(_ context.Context) (err error) {
+	if qs.cancel == nil {
+		return ErrNotIninializated
 	}
 
-	numberOfQuotes := int64(len(*qs.quotes)) - 1
+	qs.cancel()
 
-	result, _ := rand.Int(rand.Reader, big.NewInt(numberOfQuotes))
-
-	index := result.Int64()
-
-	quote := (*qs.quotes)[index]
-
-	return quote.Quote, nil
+	return nil
 }
 
-func (qs *quotesService) loadQuotes(ctx context.Context) error {
-	rawBytes, err := os.ReadFile(qs.quotesFilepath)
-	if err != nil {
-		gzap.Logger.Error("error reading quotes file",
-			gzap.Error(err),
-			gzap.String(app.FilePathTag, qs.quotesFilepath))
-		return err
+func (qs *quotesService) GetQuote(ctx context.Context) (string, error) {
+	if qs.storage == nil {
+		return "", ErrNotIninializated
 	}
 
-	quotes := &models.Quotes{}
-	err = easyjson.Unmarshal(rawBytes, quotes)
-	if err != nil {
-		gzap.Logger.Error("error unmarshal quotes file",
-			gzap.Error(err),
-			gzap.String(app.FilePathTag, qs.quotesFilepath))
-		return err
+	if qs.input == nil {
+		return "", ErrNotIninializated
 	}
 
-	qs.mu.Lock()
-	defer qs.mu.Unlock()
+	finish := make(chan struct{})
+	job := &models.QuotesWork{
+		Finish: finish,
+	}
 
-	qs.quotes = quotes
+	select {
+	case <-ctx.Done():
+		return "", ErrShutdown
+	case qs.input <- job:
+		select {
+		case <-ctx.Done():
+			return "", ErrShutdown
+		case <-finish:
+			if job.Error != nil {
+				return "", job.Error
+			}
+			return job.Quote, nil
+		}
+	}
+}
+
+func (qs *quotesService) initWorkerPool(ctx context.Context, g *errgroup.Group) error {
+	for i := uint(0); i < qs.workersCount; i++ {
+		gzap.Logger.Info("starting worker",
+			gzap.Uint("ID", i),
+		)
+
+		w, err := NewQuotesWorker(
+			qs.storage,
+			qs.workerChannel,
+		)
+		if err != nil {
+			gzap.Logger.Error("error starting worker",
+				gzap.Error(err),
+				gzap.Uint("ID", i),
+			)
+			return err
+		}
+
+		g.Go(func() error {
+			err = w.Startup(ctx)
+			if err != nil {
+				return err
+			}
+
+			return nil
+		})
+	}
+
+	g.Go(func() error {
+		for {
+			select {
+			case <-ctx.Done():
+				return nil
+			case work := <-qs.input:
+				select {
+				case <-ctx.Done():
+					return nil
+				case currentWorker := <-qs.workerChannel:
+					select {
+					case <-ctx.Done():
+						return nil
+					case currentWorker <- work:
+						continue
+					}
+				}
+			}
+		}
+	})
 
 	return nil
 }
@@ -108,28 +152,26 @@ func (qs *quotesService) loadQuotes(ctx context.Context) error {
 func NewQuotesService(
 	ctx context.Context,
 	cfg configurer,
+	storage quotesStorager,
 ) (*quotesService, error) {
 
 	if cfg == nil {
 		return nil, ErrNilConfig
 	}
 
+	if storage == nil {
+		return nil, ErrStorageIsNil
+	}
+
 	s := &quotesService{
-		quotesFilepath: cfg.GetQuotesFilepath(),
-		processingTime: cfg.GetProcessingTime(),
-		workersCount:   cfg.GetWorkersCount(),
+		input:         make(chan *models.QuotesWork),
+		storage:       storage,
+		workersCount:  cfg.GetWorkersCount(),
+		workerChannel: make(chan chan *models.QuotesWork),
 	}
 
 	if s.workersCount < 1 {
 		return nil, ErrZeroWorkersCount
-	}
-
-	if len(s.quotesFilepath) == 0 {
-		return nil, ErrEmptyFilepath
-	}
-
-	if !fileExists(s.quotesFilepath) {
-		return nil, ErrQuotesFileIsNotExists
 	}
 
 	return s, nil

@@ -31,7 +31,7 @@ func TestSpect(t *testing.T) {
 	Convey("Given quotes service with nil config", t, func() {
 		_, err := storage.NewQuotesStorage(ctx, nil)
 		Convey("The error should be ErrNilConfig", func() {
-			So(err, ShouldEqual, quotes.ErrNilConfig)
+			So(err, ShouldResemble, quotes.ErrNilConfig)
 		})
 	})
 
