@@ -3,7 +3,6 @@ package storage_test
 import (
 	"context"
 	"errors"
-	"fmt"
 	"testing"
 	"time"
 
@@ -101,7 +100,7 @@ func TestSpect(t *testing.T) {
 					So(err2, ShouldNotBeNil)
 				})
 				Convey("should starts with parse", func() {
-					So(fmt.Sprintf("%s", err2), ShouldStartWith, "parse")
+					So(err2.Error(), ShouldStartWith, "parse")
 				})
 			})
 		})

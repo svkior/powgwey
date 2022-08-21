@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/sasha-s/go-deadlock"
 	"github.com/svkior/powgwey/server_internal/models"
 	"golang.org/x/sync/errgroup"
 	"gopkg.in/dailymuse/gzap.v1"
@@ -33,20 +32,27 @@ type quotesService struct {
 
 	workerChannel chan chan *models.QuotesWork
 	input         chan *models.QuotesWork
-	mu            deadlock.RWMutex
 	cancel        func()
 }
 
 func (qs *quotesService) Startup(ctx context.Context) (err error) {
+	gzap.Logger.Info("starting quotes service")
 	ctx, qs.cancel = context.WithCancel(ctx)
 	g, ctx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		return qs.initWorkerPool(ctx, g)
+		err := qs.initWorkerPool(ctx, g)
+		if err != nil {
+			return err
+		}
+		qs.poller(ctx, g)
+		return nil
 	})
 
 	g.Go(func() error {
 		<-ctx.Done()
+		gzap.Logger.Info("stopping quotes service")
+
 		return nil
 	})
 	err = g.Wait()
@@ -97,6 +103,29 @@ func (qs *quotesService) GetQuote(ctx context.Context) (string, error) {
 	}
 }
 
+func (qs *quotesService) poller(ctx context.Context, g *errgroup.Group) {
+	g.Go(func() error {
+		for {
+			select {
+			case <-ctx.Done():
+				return nil
+			case work := <-qs.input:
+				select {
+				case <-ctx.Done():
+					return nil
+				case currentWorker := <-qs.workerChannel:
+					select {
+					case <-ctx.Done():
+						return nil
+					case currentWorker <- work:
+						continue
+					}
+				}
+			}
+		}
+	})
+}
+
 func (qs *quotesService) initWorkerPool(ctx context.Context, g *errgroup.Group) error {
 	for i := uint(0); i < qs.workersCount; i++ {
 		gzap.Logger.Info("starting worker",
@@ -124,27 +153,6 @@ func (qs *quotesService) initWorkerPool(ctx context.Context, g *errgroup.Group) 
 			return nil
 		})
 	}
-
-	g.Go(func() error {
-		for {
-			select {
-			case <-ctx.Done():
-				return nil
-			case work := <-qs.input:
-				select {
-				case <-ctx.Done():
-					return nil
-				case currentWorker := <-qs.workerChannel:
-					select {
-					case <-ctx.Done():
-						return nil
-					case currentWorker <- work:
-						continue
-					}
-				}
-			}
-		}
-	})
 
 	return nil
 }
