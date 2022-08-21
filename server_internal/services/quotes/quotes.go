@@ -32,12 +32,10 @@ type quotesService struct {
 
 	workerChannel chan chan *models.QuotesWork
 	input         chan *models.QuotesWork
-	cancel        func()
 }
 
 func (qs *quotesService) Startup(ctx context.Context) (err error) {
 	gzap.Logger.Info("starting quotes service")
-	ctx, qs.cancel = context.WithCancel(ctx)
 	g, ctx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
@@ -59,16 +57,6 @@ func (qs *quotesService) Startup(ctx context.Context) (err error) {
 	if err != nil {
 		return err
 	}
-
-	return nil
-}
-
-func (qs *quotesService) Shutdown(_ context.Context) (err error) {
-	if qs.cancel == nil {
-		return ErrNotIninializated
-	}
-
-	qs.cancel()
 
 	return nil
 }

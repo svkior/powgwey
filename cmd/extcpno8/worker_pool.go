@@ -17,7 +17,7 @@ type pool struct {
 	done   chan struct{}
 }
 
-func newPool(w int, t int) *pool {
+func newPool(w, t int) *pool {
 	return &pool{
 		workers:   w,
 		maxTasks:  t,
