@@ -157,6 +157,17 @@ It can be assumed that in a highly loaded project, the payload will take some ti
 Let's limit the fictitious load of the variable QUOTES_PROCESSING_TIME
 We will create a work queue from QUOTES_WORKERS
 
+### TCP Server Component
+
+According to https://github.com/svkior/powgwey/issues/12 I decided to implement No8.
+
+Because for gaming industry the most important feature is a lattency.
+Second important is maximum throughput.
+
+If we can provide lattency, we can spend more mony for servers.
+
+
+
 
 ##  4. <a name='Serverenvironmentvariables'></a>Server environment variables
 
