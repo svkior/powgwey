@@ -38,8 +38,7 @@ type quotesStorage struct {
 
 	quotes *models.Quotes
 
-	mu     deadlock.RWMutex
-	finish func()
+	mu deadlock.RWMutex
 }
 
 func (qs *quotesStorage) Startup(ctx context.Context) (err error) {
@@ -49,7 +48,6 @@ func (qs *quotesStorage) Startup(ctx context.Context) (err error) {
 		gzap.Duration("processing time", qs.processingTime),
 	)
 
-	ctx, qs.finish = context.WithCancel(ctx)
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error {
 		return qs.loadQuotes(ctx)
@@ -63,21 +61,6 @@ func (qs *quotesStorage) Startup(ctx context.Context) (err error) {
 	if err != nil {
 		return err
 	}
-
-	return nil
-}
-
-func (qs *quotesStorage) Shutdown(_ context.Context) (err error) {
-	gzap.Logger.Info("Shutting down quotes storage",
-		gzap.String("quotes from", qs.quotesFilepath),
-		gzap.Duration("processing time", qs.processingTime),
-	)
-
-	if qs.finish == nil {
-		return ErrStorageIsNotStarted
-	}
-
-	qs.finish()
 
 	return nil
 }

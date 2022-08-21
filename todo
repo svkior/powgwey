@@ -15,22 +15,24 @@ Server:
     ✔ skeleton @started(22-08-20 14:26) @done(22-08-20 14:41) @lasted(15m)
     ☐ protocol library
     tcp-server:
-            ☐ code from other repo as example
-            ☐ base component
-            ☐ base load test
+            ✔ code from other repo as example @done(22-08-21 18:58)
+            ✔ base component @done(22-08-21 18:58)
+            ✔ base load test @done(22-08-21 18:58)
     service components:
         quotes: @started(22-08-20 11:46)
             ✔ creating workerpool @done(22-08-21 11:45)
         storage:
             ✔ quotes_storage @started(22-08-20 20:31) @done(22-08-21 11:45) @lasted(15h14m55s)
             ✔ loading quotes @done(22-08-20 20:32)
+        simpletcp:
+            ✔ without plugins @done(22-08-21 18:59)
     ☐ business logic
 Client:
     ✔ skeleton @done(22-08-20 14:41)
     ☐ protocol library
     ☐ business logic
 LoadTesting:
-    ☐ plugin for K6
+    ✔ plugin for K6 @done(22-08-21 18:58)
     ☐ metrics
 Deploys:
     makefile:
@@ -52,7 +54,7 @@ Deploys:
         ✔ localhost:5000/air base golang image @started(22-08-20 11:55) @done(22-08-20 12:35) @lasted(40m29s)
         ✔ localhost:5000/server server build image @started(22-08-20 12:45) @done(22-08-20 14:24) @lasted(1h39m57s)
         ✔ localhost:5000/client server build image @started(22-08-20 12:47) @done(22-08-20 14:25) @lasted(1h38m24s)
-        ☐ localhost:5000/loadtest @started(22-08-21 12:22)
+        ✔ localhost:5000/loadtest @started(22-08-21 12:22) @done(22-08-21 18:58) @lasted(6h36m22s)
     quotes:
         ✔ 1-get-quotes get quotes @started(22-08-20 11:25) @done(22-08-20 11:39) @lasted(14m26s)
 Documenting:
