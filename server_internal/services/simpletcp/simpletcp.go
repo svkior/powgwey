@@ -23,8 +23,13 @@ type quoterer interface {
 	GetQuote(context.Context) (string, error)
 }
 
+type validater interface {
+	Validate(ctx context.Context, conn net.Conn) error
+}
+
 type tcpserver struct {
 	quotes      quoterer
+	validate    validater
 	bindAddress string
 
 	port int
@@ -76,25 +81,30 @@ func (s *tcpserver) GetPort() int {
 
 func (s *tcpserver) handleConnection(ctx context.Context, g *errgroup.Group, conn net.Conn) {
 	g.Go(func() error {
-
-		if s.quotes != nil {
-
-			quote, err := s.quotes.GetQuote(ctx)
+		defer func() {
+			err := conn.Close()
 			if err != nil {
-				gzap.Logger.Error("error get quote", gzap.Error(err))
-			} else {
-				_, err = conn.Write([]byte(quote))
-				if err != nil {
-					gzap.Logger.Error("error write to client", gzap.Error(err))
-				}
+				gzap.Logger.Error("error close connection", gzap.Error(err))
+			}
+		}()
+
+		if s.validate != nil {
+			err := s.validate.Validate(ctx, conn)
+			if err != nil {
+				return err
 			}
 		}
 
-		err := conn.Close()
+		quote, err := s.quotes.GetQuote(ctx)
 		if err != nil {
-			gzap.Logger.Error("error close connection", gzap.Error(err))
-			return nil
+			gzap.Logger.Error("error get quote", gzap.Error(err))
+		} else {
+			_, err = conn.Write([]byte(quote))
+			if err != nil {
+				gzap.Logger.Error("error write to client", gzap.Error(err))
+			}
 		}
+
 		return nil
 	})
 }
@@ -102,6 +112,7 @@ func (s *tcpserver) handleConnection(ctx context.Context, g *errgroup.Group, con
 func NewSimpleTCPServer(
 	cfg configurer,
 	quotes quoterer,
+	validate validater,
 ) (*tcpserver, error) {
 
 	if cfg == nil {
@@ -115,6 +126,7 @@ func NewSimpleTCPServer(
 	s := &tcpserver{
 		bindAddress: cfg.GetBindAddress(),
 		quotes:      quotes,
+		validate:    validate,
 	}
 
 	return s, nil

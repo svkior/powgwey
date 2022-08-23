@@ -40,7 +40,7 @@ func (q *quotesMock) GetQuote(_ context.Context) (string, error) {
 func TestSimpleTCP(t *testing.T) {
 	ctx := context.TODO()
 	Convey("Given SimpleTCP Server with empty config", t, func() {
-		_, err := simpletcp.NewSimpleTCPServer(nil, nil)
+		_, err := simpletcp.NewSimpleTCPServer(nil, nil, nil)
 		Convey("If no config error should be Nil Config", func() {
 			So(err, ShouldNotBeNil)
 			So(err, ShouldResemble, simpletcp.ErrNilConfig)
@@ -51,7 +51,7 @@ func TestSimpleTCP(t *testing.T) {
 		cfg := &configMock{
 			bindAddr: ":0",
 		}
-		_, err := simpletcp.NewSimpleTCPServer(cfg, nil)
+		_, err := simpletcp.NewSimpleTCPServer(cfg, nil, nil)
 		Convey("If no config error should be Nil Config", func() {
 			So(err, ShouldNotBeNil)
 			So(err, ShouldResemble, simpletcp.ErrNilQuotes)
@@ -66,7 +66,7 @@ func TestSimpleTCP(t *testing.T) {
 			quote: "Hello, World!",
 		}
 		Convey("When creating new SimpleTCP server", func() {
-			srv, err := simpletcp.NewSimpleTCPServer(cfg, quotes)
+			srv, err := simpletcp.NewSimpleTCPServer(cfg, quotes, nil)
 			Convey("The error should be nil", func() {
 				So(err, ShouldBeNil)
 				Convey("The object should not be nil", func() {
