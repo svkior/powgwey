@@ -810,3 +810,90 @@ func (o *Textquote) UnmarshalBinary(data []byte) error {
 	}
 	return err
 }
+
+type Result struct {
+	Ok bool
+}
+
+// MarshalTo encodes o as Colfer into buf and returns the number of bytes written.
+// If the buffer is too small, MarshalTo will panic.
+func (o *Result) MarshalTo(buf []byte) int {
+	var i int
+
+	if o.Ok {
+		buf[i] = 0
+		i++
+	}
+
+	buf[i] = 0x7f
+	i++
+	return i
+}
+
+// MarshalLen returns the Colfer serial byte size.
+// The error return option is models.ColferMax.
+func (o *Result) MarshalLen() (int, error) {
+	l := 1
+
+	if o.Ok {
+		l++
+	}
+
+	if l > ColferSizeMax {
+		return l, ColferMax(fmt.Sprintf("colfer: struct models.result exceeds %d bytes", ColferSizeMax))
+	}
+	return l, nil
+}
+
+// MarshalBinary encodes o as Colfer conform encoding.BinaryMarshaler.
+// The error return option is models.ColferMax.
+func (o *Result) MarshalBinary() (data []byte, err error) {
+	l, err := o.MarshalLen()
+	if err != nil {
+		return nil, err
+	}
+	data = make([]byte, l)
+	o.MarshalTo(data)
+	return data, nil
+}
+
+// Unmarshal decodes data as Colfer and returns the number of bytes read.
+// The error return options are io.EOF, models.ColferError and models.ColferMax.
+func (o *Result) Unmarshal(data []byte) (int, error) {
+	if len(data) == 0 {
+		return 0, io.EOF
+	}
+	header := data[0]
+	i := 1
+
+	if header == 0 {
+		if i >= len(data) {
+			goto eof
+		}
+		o.Ok = true
+		header = data[i]
+		i++
+	}
+
+	if header != 0x7f {
+		return 0, ColferError(i - 1)
+	}
+	if i < ColferSizeMax {
+		return i, nil
+	}
+eof:
+	if i >= ColferSizeMax {
+		return 0, ColferMax(fmt.Sprintf("colfer: struct models.result size exceeds %d bytes", ColferSizeMax))
+	}
+	return 0, io.EOF
+}
+
+// UnmarshalBinary decodes data as Colfer conform encoding.BinaryUnmarshaler.
+// The error return options are io.EOF, models.ColferError, models.ColferTail and models.ColferMax.
+func (o *Result) UnmarshalBinary(data []byte) error {
+	i, err := o.Unmarshal(data)
+	if i < len(data) && err == nil {
+		return ColferTail(i)
+	}
+	return err
+}
