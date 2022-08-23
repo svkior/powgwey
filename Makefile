@@ -14,7 +14,7 @@ build-base: ## build base golang working image
 
 .PHONY: generate
 generate: ## regenerate all generated code
-	docker run -it --rm \
+	@docker run -it --rm \
 		-v ${PWD}:/project \
 		-v golang-cache-vol:/go/pkg/mod \
 		-v go-build-vol:/root/.cache/go-build \
@@ -22,6 +22,14 @@ generate: ## regenerate all generated code
 		--entrypoint=go \
 		localhost:5000/air \
 		generate ./...
+	@docker run -it --rm \
+		-v ${PWD}:/project \
+		-v golang-cache-vol:/go/pkg/mod \
+		-v go-build-vol:/root/.cache/go-build \
+		--workdir="/project" \
+		--entrypoint=go \
+		localhost:5000/air \
+		generate ./integration/puretcp/colfer.go
 
 .PHONY: build-server
 build-server: ## build server production image

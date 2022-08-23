@@ -1,0 +1,21 @@
+package models
+
+// Course is the grounds where the game of golf is played.
+type request struct {
+	ID   uint64
+}
+
+type puzzle struct {
+	xk uint64
+    k int64 
+    n int64
+    checksum  text
+}
+
+type solve  struct {
+    y0 uint64
+}
+
+type  textquote struct {
+    text text
+}
