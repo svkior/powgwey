@@ -19,6 +19,8 @@ RUN go install go.k6.io/xk6/cmd/xk6@latest
 
 RUN go install go.k6.io/k6@latest
 
+RUN go install  github.com/pascaldekloe/colfer/cmd/colf@latest
+
 # Create the user and group files that will be used in the running container to
 # run the process as an unprivileged user.
 RUN mkdir /user \

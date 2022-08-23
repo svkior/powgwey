@@ -3,7 +3,7 @@ package models
 // nolint:revive // ok
 import _ "github.com/mailru/easyjson/gen"
 
-//go:generate easyjson quotesm.go
+//go:generate easyjson quotes.go
 
 // easyjson:json
 type Quotes []Quote
