@@ -153,12 +153,12 @@ watch-test: ## test all golang code
 		--workdir="/project" \
 		--entrypoint=goconvey \
 		localhost:5000/air \
-		-excludedDirs "data,deploy,tmp,cmd" -host "0.0.0.0" 
+		-excludedDirs "data,deploy,tmp,cmd,server_internal/models,server_internal/app,research,contracts" -host "0.0.0.0" 
 
 .PHONY: watch-testlocal
 watch-testlocal: ## test all golang code on local environment
 	~/go/bin/goconvey \
-	-excludedDirs "data,deploy,tmp,cmd,server_internal/models,server_internal/app" -host "0.0.0.0" 
+	-excludedDirs "data,deploy,tmp,cmd,server_internal/models,server_internal/app,research,contracts" -host "0.0.0.0" 
 
 .PHONY: help
 help: ## Print this help

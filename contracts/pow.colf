@@ -19,3 +19,7 @@ type solve  struct {
 type  textquote struct {
     text text
 }
+
+type  result struct {
+    ok bool
+}
