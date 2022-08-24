@@ -110,7 +110,7 @@ watch-simple: create-network## watch example8 server
 watch-client: create-network## start server in autoreload mode
 	@docker run -it --rm --name client \
 		--network local \
-		-v ${PWD}:/project \
+		-v ${PWD}/integration/puretcp:/project \
 		-v golang-cache-vol:/go/pkg/mod \
 		-v go-build-vol:/root/.cache/go-build \
 		--workdir="/project" \

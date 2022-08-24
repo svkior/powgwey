@@ -8,10 +8,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-const (
-	defaultWorkersCount = 1
-)
-
 var (
 	ErrNotImplemented = errors.New("not implemented")
 )
