@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net"
+	"sync"
 
 	"golang.org/x/sync/errgroup"
 	"gopkg.in/dailymuse/gzap.v1"
@@ -33,6 +34,7 @@ type tcpserver struct {
 	bindAddress string
 
 	port int
+	lock sync.RWMutex
 }
 
 func (s *tcpserver) Startup(ctx context.Context) error {
@@ -43,7 +45,9 @@ func (s *tcpserver) Startup(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	s.lock.Lock()
 	s.port = l.Addr().(*net.TCPAddr).Port
+	s.lock.Unlock()
 
 	g.Go(func() error {
 		<-ctx.Done()
@@ -76,6 +80,8 @@ func (s *tcpserver) Startup(ctx context.Context) error {
 }
 
 func (s *tcpserver) GetPort() int {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
 	return s.port
 }
 

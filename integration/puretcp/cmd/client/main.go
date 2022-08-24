@@ -6,7 +6,7 @@ import (
 	"gopkg.in/dailymuse/gzap.v1"
 )
 
-func printAllEnvVariables() {
+func PrintAllEnvVariables() {
 	allEnvs := os.Environ()
 
 	for _, value := range allEnvs {
@@ -22,6 +22,6 @@ func main() {
 	}
 
 	gzap.Logger.Info("Hello, World")
-	printAllEnvVariables()
+	PrintAllEnvVariables()
 
 }

@@ -10,9 +10,9 @@ export const options = {
 };
 
 export default function () {
-    const conn = tcp.connect('example8:8972')
+    const conn = tcp.connect('server:8000')
     //tcp.write(conn, 'some data\n');
-    const reply = tcp.read(conn)
+    const reply = tcp.getQuote(conn)
     //console.log('reply',reply)
     check(reply, {
         'Non null answer': (resp) => resp.length > 0,

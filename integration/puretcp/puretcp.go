@@ -3,6 +3,8 @@ package puretcp
 import (
 	"net"
 
+	"puretcp/pow"
+
 	"go.k6.io/k6/js/modules"
 )
 
@@ -10,15 +12,40 @@ func init() {
 	modules.Register("k6/x/puretcp", new(TCP))
 }
 
-type TCP struct{}
+type solver interface {
+	Solve(conn net.Conn) error
+}
+
+type TCP struct {
+	solv solver
+}
 
 func (tcp *TCP) Connect(addr string) (net.Conn, error) {
+
+	solv, err := pow.NewSolverPlugin()
+	if err != nil {
+		return nil, err
+	}
+
+	tcp.solv = solv
+
 	conn, err := net.Dial("tcp", addr)
 	if err != nil {
 		return nil, err
 	}
 
 	return conn, nil
+}
+
+func (tcp *TCP) GetQuote(conn net.Conn) string {
+	err := tcp.solv.Solve(conn)
+	if err != nil {
+		return ""
+	}
+
+	quote := tcp.Read(conn)
+	//log.Printf("QUOTE IS: %s", quote)
+	return quote
 }
 
 func (tcp *TCP) Write(conn net.Conn, data []byte) error {

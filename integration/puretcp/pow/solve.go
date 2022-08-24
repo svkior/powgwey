@@ -3,7 +3,7 @@ package pow
 import (
 	"errors"
 
-	"github.com/svkior/powgwey/server_internal/models"
+	"puretcp/models"
 )
 
 var (
