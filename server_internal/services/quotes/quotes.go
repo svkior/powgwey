@@ -116,9 +116,6 @@ func (qs *quotesService) poller(ctx context.Context, g *errgroup.Group) {
 
 func (qs *quotesService) initWorkerPool(ctx context.Context, g *errgroup.Group) error {
 	for i := uint(0); i < qs.workersCount; i++ {
-		gzap.Logger.Info("starting worker",
-			gzap.Uint("ID", i),
-		)
 
 		w, err := NewQuotesWorker(
 			qs.storage,
@@ -146,7 +143,6 @@ func (qs *quotesService) initWorkerPool(ctx context.Context, g *errgroup.Group) 
 }
 
 func NewQuotesService(
-	ctx context.Context,
 	cfg configurer,
 	storage quotesStorager,
 ) (*quotesService, error) {
