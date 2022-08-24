@@ -44,7 +44,7 @@ func (m *pow) Validate(ctx context.Context, conn net.Conn) error {
 		return ErrNilConnection
 	}
 	reply := make([]byte, 1024)
-	conn.SetReadDeadline(time.Now().Add(m.readTimeout))
+	_ = conn.SetReadDeadline(time.Now().Add(m.readTimeout))
 	bytes_readed, err := conn.Read(reply)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
@@ -55,8 +55,8 @@ func (m *pow) Validate(ctx context.Context, conn net.Conn) error {
 		}
 		return err
 	}
-	conn.SetReadDeadline(time.Now().Add(10 * m.readTimeout))
-	conn.SetWriteDeadline(time.Now().Add(10 * m.readTimeout))
+	_ = conn.SetReadDeadline(time.Now().Add(10 * m.readTimeout))
+	_ = conn.SetWriteDeadline(time.Now().Add(10 * m.readTimeout))
 
 	req := models.Request{}
 	err = req.UnmarshalBinary(reply[0:bytes_readed])
@@ -73,15 +73,15 @@ func (m *pow) Validate(ctx context.Context, conn net.Conn) error {
 	if err != nil {
 		return ErrGeneratePuzzle
 	}
-	conn.SetReadDeadline(time.Now().Add(100 * m.readTimeout))
-	conn.SetWriteDeadline(time.Now().Add(m.writeTimeout))
+	_ = conn.SetReadDeadline(time.Now().Add(100 * m.readTimeout))
+	_ = conn.SetWriteDeadline(time.Now().Add(m.writeTimeout))
 	_, err = conn.Write(reply[0:marshalLen])
 	if err != nil {
 		return ErrTimeout
 	}
 
-	conn.SetWriteDeadline(time.Now().Add(100 * m.writeTimeout))
-	conn.SetReadDeadline(time.Now().Add(100 * m.readTimeout))
+	_ = conn.SetWriteDeadline(time.Now().Add(100 * m.writeTimeout))
+	_ = conn.SetReadDeadline(time.Now().Add(100 * m.readTimeout))
 	bytes_readed, err = conn.Read(reply)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {

@@ -33,7 +33,6 @@ func main() {
 	if err := gzap.InitLogger(); err != nil {
 		panic(err)
 	}
-	//PrintAllEnvVariables()
 
 	cfg, err := config.NewSimpleServerConfig()
 	if err != nil {
@@ -46,7 +45,7 @@ func main() {
 		gzap.Logger.Fatal("Error ctreating storage", gzap.Error(err))
 	}
 	// Quotes
-	quotes, err := quotes.NewQuotesService(cfg, store)
+	quoteSvc, err := quotes.NewQuotesService(cfg, store)
 	if err != nil {
 		gzap.Logger.Fatal("Error ctreating quotes service", gzap.Error(err))
 	}
@@ -64,7 +63,7 @@ func main() {
 	}
 
 	// TCP Server
-	tcpServer, err := simpletcp.NewSimpleTCPServer(cfg, quotes, powMiddleware)
+	tcpServer, err := simpletcp.NewSimpleTCPServer(cfg, quoteSvc, powMiddleware)
 	if err != nil {
 		gzap.Logger.Fatal("Error ctreating simple TCP server", gzap.Error(err))
 	}
@@ -77,7 +76,7 @@ func main() {
 	})
 	// Quotes
 	g.Go(func() error {
-		return quotes.Startup(gCtx)
+		return quoteSvc.Startup(gCtx)
 	})
 	// Metrics
 	//  Not Need

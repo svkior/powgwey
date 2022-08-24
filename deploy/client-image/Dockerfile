@@ -2,7 +2,7 @@ FROM localhost:5000/air:latest AS build
 
 WORKDIR /src/
 
-ADD . /src/
+ADD ./integration/puretcp /src/
 
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
