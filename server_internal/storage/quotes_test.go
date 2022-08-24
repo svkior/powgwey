@@ -28,7 +28,7 @@ func (c *testConfig) GetQuotesFilepath() string {
 func TestSpect(t *testing.T) {
 	ctx := context.TODO()
 	Convey("Given quotes service with nil config", t, func() {
-		_, err := storage.NewQuotesStorage(ctx, nil)
+		_, err := storage.NewQuotesStorage(nil)
 		Convey("The error should be ErrNilConfig", func() {
 			So(err, ShouldResemble, quotes.ErrNilConfig)
 		})
@@ -41,14 +41,14 @@ func TestSpect(t *testing.T) {
 		}
 		Convey("We create new Quotes Service with zero processing time", func() {
 			cfg.processingTime = 0
-			_, err := storage.NewQuotesStorage(ctx, cfg)
+			_, err := storage.NewQuotesStorage(cfg)
 			Convey("Error should be nil", func() {
 				So(err, ShouldBeNil)
 			})
 		})
 		Convey("We create new Quotes with empty filepath", func() {
 			cfg.quotesFilepath = ""
-			_, err := storage.NewQuotesStorage(ctx, cfg)
+			_, err := storage.NewQuotesStorage(cfg)
 			Convey("Error should be nil", func() {
 				So(err, ShouldNotBeNil)
 			})
@@ -59,7 +59,7 @@ func TestSpect(t *testing.T) {
 
 		Convey("When we create new service with non existing filepath", func() {
 			cfg.quotesFilepath = "non-existent-file"
-			_, err := storage.NewQuotesStorage(ctx, cfg)
+			_, err := storage.NewQuotesStorage(cfg)
 			Convey("Error should not be nil", func() {
 				So(err, ShouldNotBeNil)
 			})
@@ -70,7 +70,7 @@ func TestSpect(t *testing.T) {
 
 		Convey("When we create new service with wrong json structure", func() {
 			cfg.quotesFilepath = "../../data/quotes/wrong.json"
-			qs, err := storage.NewQuotesStorage(ctx, cfg)
+			qs, err := storage.NewQuotesStorage(cfg)
 			Convey("Error should be nil", func() {
 				So(err, ShouldBeNil)
 			})
@@ -106,7 +106,7 @@ func TestSpect(t *testing.T) {
 		})
 
 		Convey("When we create new Quotes Service with normal params", func() {
-			qs, err := storage.NewQuotesStorage(ctx, cfg)
+			qs, err := storage.NewQuotesStorage(cfg)
 			Convey("Error should be nil", func() {
 				So(err, ShouldBeNil)
 			})

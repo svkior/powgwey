@@ -29,7 +29,7 @@ generate: ## regenerate all generated code
 		--workdir="/project" \
 		--entrypoint=go \
 		localhost:5000/air \
-		generate ./integration/puretcp/colfer.go
+		generate ./integration/puretcp/.
 
 .PHONY: build-server
 build-server: ## build server production image
@@ -88,7 +88,7 @@ start-smoke: create-network ## start smoke test
 watch-server: create-network## start server in autoreload mode
 	@docker run -it --rm --name server \
 		--network local \
-		--env-file "./deploy/server.env" \
+		--env-file "./deploy/server.watch.env" \
 		-v ${PWD}:/project \
 		-v golang-cache-vol:/go/pkg/mod \
 		-v go-build-vol:/root/.cache/go-build \

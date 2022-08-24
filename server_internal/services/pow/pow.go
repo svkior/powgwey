@@ -68,7 +68,6 @@ func (m *pow) Validate(ctx context.Context, conn net.Conn) error {
 	if err != nil {
 		return ErrGeneratePuzzle
 	}
-	log.Printf("Answer is %d", x0)
 
 	marshalLen := puzzle.MarshalTo(reply)
 	if err != nil {
@@ -120,7 +119,7 @@ func (m *pow) generatePuzzle() (uint64, *models.Puzzle, error) {
 
 	log.Printf("difficulty %v", difficulty)
 	//FIXME: Choose difficulty of algorythn  from  difficulty
-	x0, puzzle, err := generatePuzzle(Algosin, 3, 3)
+	x0, puzzle, err := generatePuzzle(Algosin, 5, 5)
 	if err != nil {
 		return 0, nil, err
 	}

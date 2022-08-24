@@ -24,11 +24,11 @@ func (c *simpleServerConfig) GetWorkersCount() uint {
 	return c.vpr.GetUint("QUOTES_WORKERS")
 }
 
-func (c *simpleServerConfig) GetQuotesFilepah() string {
+func (c *simpleServerConfig) GetQuotesFilepath() string {
 	return c.vpr.GetString("QUOTES_FILEPATH")
 }
 
-func (c *simpleServerConfig) GetQuotesProcessingTime() time.Duration {
+func (c *simpleServerConfig) GetProcessingTime() time.Duration {
 	return c.vpr.GetDuration("QUOTES_PROCESSING_TIME")
 }
 
@@ -38,6 +38,14 @@ func (c *simpleServerConfig) GetBindAddress() string {
 		c.vpr.GetString("PORT"),
 	)
 	return endpoint
+}
+
+func (c *simpleServerConfig) GetReadTimeout() time.Duration {
+	return c.vpr.GetDuration("NET_READ_TIMEOUT")
+}
+
+func (c *simpleServerConfig) GetWriteTimeout() time.Duration {
+	return c.vpr.GetDuration("NET_WRITE_TIMEOUT")
 }
 
 func (c *simpleServerConfig) prepare() (err error) {

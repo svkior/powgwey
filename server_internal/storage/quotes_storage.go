@@ -44,8 +44,8 @@ type quotesStorage struct {
 func (qs *quotesStorage) Startup(ctx context.Context) (err error) {
 
 	gzap.Logger.Info("Starting quotes storage",
-		gzap.String("quotes from", qs.quotesFilepath),
-		gzap.Duration("processing time", qs.processingTime),
+		gzap.String(app.FilePathTag, qs.quotesFilepath),
+		gzap.Duration(app.ProcessingTimeTag, qs.processingTime),
 	)
 
 	g, ctx := errgroup.WithContext(ctx)
@@ -117,7 +117,6 @@ func (qs *quotesStorage) loadQuotes(ctx context.Context) error {
 }
 
 func NewQuotesStorage(
-	ctx context.Context,
 	cfg configurer,
 ) (*quotesStorage, error) {
 
@@ -135,6 +134,7 @@ func NewQuotesStorage(
 	}
 
 	if !fileExists(s.quotesFilepath) {
+		gzap.Logger.Error("Unabpe to  find file", gzap.String(app.FilePathTag, s.quotesFilepath))
 		return nil, ErrQuotesFileIsNotExists
 	}
 

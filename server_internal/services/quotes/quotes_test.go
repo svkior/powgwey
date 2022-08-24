@@ -15,7 +15,7 @@ import (
 func TestQuotesSpect(t *testing.T) {
 	ctx := context.TODO()
 	Convey("Given quotes service with nil config and storage", t, func() {
-		_, err := quotes.NewQuotesService(ctx, nil, nil)
+		_, err := quotes.NewQuotesService(nil, nil)
 		Convey("The error should be ErrNilConfig", func() {
 			So(err, ShouldEqual, quotes.ErrNilConfig)
 		})
@@ -30,7 +30,7 @@ func TestQuotesSpect(t *testing.T) {
 		}
 		Convey("We we create new Quotes Service with zero workers", func() {
 			cfg.numberOfWorkers = 0
-			_, err := quotes.NewQuotesService(ctx, cfg, storage)
+			_, err := quotes.NewQuotesService(cfg, storage)
 			Convey("Error should not be nil", func() {
 				So(err, ShouldNotEqual, nil)
 			})
@@ -40,7 +40,7 @@ func TestQuotesSpect(t *testing.T) {
 		})
 
 		Convey("When we create new Quotes Service with normal params", func() {
-			qs, err := quotes.NewQuotesService(ctx, cfg, storage)
+			qs, err := quotes.NewQuotesService(cfg, storage)
 
 			Convey("Quotes service should not be nil", func() {
 				So(err, ShouldBeNil)
